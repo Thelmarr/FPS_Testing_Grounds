@@ -41,6 +41,7 @@ public:
 	class UAnimMontage* FireAnimation;
 
 	/** Fires a projectile. */
+	UFUNCTION(BlueprintCallable)
 	void OnFire();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
