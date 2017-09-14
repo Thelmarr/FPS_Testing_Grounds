@@ -50,7 +50,6 @@ void AMannequin::BeginPlay()
 
 void AMannequin::OnFire()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Mannequin firing!"));
 	Gun->OnFire();
 }
 
