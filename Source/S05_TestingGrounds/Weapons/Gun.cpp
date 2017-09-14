@@ -41,6 +41,7 @@ void AGun::Tick(float DeltaTime)
 
 void AGun::OnFire()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Fire!"));
 	// try and fire a projectile
 	if (ProjectileClass != NULL)
 	{
@@ -55,7 +56,10 @@ void AGun::OnFire()
 			World->SpawnActor<ABallProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
 		}
 	}
-
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Missing projectile!"));
+	}	
 	// try and play the sound if specified
 	if (FireSound != NULL)
 	{
