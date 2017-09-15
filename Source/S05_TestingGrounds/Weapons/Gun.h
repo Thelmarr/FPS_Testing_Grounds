@@ -25,7 +25,7 @@ public:
 	AGun();
 
 	/** Gun muzzle's offset from the characters location */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category =" Gameplay")
 	FVector GunOffset;
 
 	/** Projectile class to spawn */
@@ -33,19 +33,24 @@ public:
 	TSubclassOf<class ABallProjectile> ProjectileClass;
 
 	/** Sound to play each time we fire */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
 	class USoundBase* FireSound;
 
 	/** AnimMontage to play each time we fire */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	class UAnimMontage* FireAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
+	class UAnimMontage* FireAnimation_1P;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
+	class UAnimMontage* FireAnimation_3P;
 
 	/** Fires a projectile. */
 	UFUNCTION(BlueprintCallable)
 	void OnFire();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
-	UAnimInstance *AnimInstance;
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
+	UAnimInstance *AnimInstance_1P;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
+	UAnimInstance *AnimInstance_3P;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

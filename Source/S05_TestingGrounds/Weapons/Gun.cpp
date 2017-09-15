@@ -63,12 +63,13 @@ void AGun::OnFire()
 	}
 
 	// try and play a firing animation if specified
-	if (FireAnimation != NULL)
+	if (FireAnimation_1P != nullptr && AnimInstance_1P != nullptr)
 	{
-		// Get the animation object for the arms mesh
-		if (AnimInstance != NULL)
-		{
-			AnimInstance->Montage_Play(FireAnimation, 1.f);
-		}
+		AnimInstance_1P->Montage_Play(FireAnimation_1P, 1.f);
 	}
+	if (FireAnimation_3P != nullptr && AnimInstance_3P != nullptr)
+	{
+		AnimInstance_3P->Montage_Play(FireAnimation_3P, 1.f);
+	}
+	
 }
