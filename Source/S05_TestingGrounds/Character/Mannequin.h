@@ -23,7 +23,7 @@ class S05_TESTINGGROUNDS_API AMannequin : public ACharacter
 	TSubclassOf<class AGun> GunBlueprint;
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	void OnFire();
+	void PullTrigger();
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	AGun* Gun;
