@@ -14,12 +14,19 @@ class S05_TESTINGGROUNDS_API AInfiniteTerrainGameMode : public AS05_TestingGroun
 {
 	GENERATED_BODY()
 
+	AInfiniteTerrainGameMode();
+		
 	void BeginPlay();
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Navigation")
-	void AddtoPool(ANavMeshBoundsVolume *Iterator);
+	void AddtoPool(class ANavMeshBoundsVolume *VolumeToAdd);
 
 	UFUNCTION(BlueprintCallable, Category = "Navigation")
 	void PopulateBoundsVolumePool();	
+
+protected:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pool")
+	class UActorPool *NavMeshPool;
 };
