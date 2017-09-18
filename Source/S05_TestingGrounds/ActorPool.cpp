@@ -18,23 +18,23 @@ UActorPool::UActorPool()
 // Called when the game starts
 AActor* UActorPool::Checkout()
 {
-	UE_LOG(LogTemp, Warning, TEXT("[%s] Checkout"), *GetName());
-	return nullptr;
+	if (TPool.Num() == 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[%s] Nothing in pool!"), *GetName());
+		return nullptr;
+	}
+	return TPool.Pop();
 }
 
 
 // Called every frame
 void UActorPool::Return(AActor* ActorToReturn)
 {
-	if (ActorToReturn == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Null-Actor eturned"));
-		return;
-	}
-	UE_LOG(LogTemp, Warning, TEXT("[%s] Actor eturned"), *ActorToReturn->GetName());
+	Add(ActorToReturn);
 }
 
 void UActorPool::Add(AActor* ActorToAdd)
 {
-	Return(ActorToAdd);
+	
+	TPool.Push(ActorToAdd);
 }
