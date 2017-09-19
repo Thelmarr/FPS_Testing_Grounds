@@ -20,7 +20,6 @@ AActor* UActorPool::Checkout()
 {
 	if (TPool.Num() == 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[%s] Nothing in pool!"), *GetName());
 		return nullptr;
 	}
 	return TPool.Pop();
@@ -35,6 +34,10 @@ void UActorPool::Return(AActor* ActorToReturn)
 
 void UActorPool::Add(AActor* ActorToAdd)
 {
-	
+	if (ActorToAdd == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No actor to return!"));
+		return;
+	}
 	TPool.Push(ActorToAdd);
 }

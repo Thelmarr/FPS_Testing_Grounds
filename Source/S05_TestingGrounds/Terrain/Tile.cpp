@@ -37,19 +37,32 @@ void ATile::Tick(float DeltaTime)
 
 void ATile::PlaceActors(TSubclassOf<AActor> ToSpawn, int MinSpawn, int MaxSpawn, float Radius, float MinScale, float MaxScale)
 {
+	TArray<FSpawnPosition> Positions = RandomSpawnPosition(MinSpawn, MaxSpawn, MinScale, MaxScale, Radius);
+	for (FSpawnPosition SpawnPosition : Positions)
+	{
+		PlaceObject(ToSpawn, SpawnPosition);
+	}
+}
+
+TArray<FSpawnPosition> ATile::RandomSpawnPosition(int MinSpawn, int MaxSpawn, float MinScale, float MaxScale, float Radius)
+{
+	TArray<FSpawnPosition> ReturnArray;
 	int NumberToSpawn = FMath::RandRange(MinSpawn, MaxSpawn);
-	
+
 	for (size_t i = 0; i < NumberToSpawn; i++)
 	{
+		
 		FVector SpawnPoint;
-		float RandScale = FMath::RandRange(MinScale, MaxScale);
-		bool Found = FindEmptyLocation(SpawnPoint, Radius * RandScale);
+		FSpawnPosition SpawnPosition;
+		SpawnPosition.Scale = FMath::RandRange(MinScale, MaxScale);
+		bool Found = FindEmptyLocation(SpawnPosition.Location, Radius * SpawnPosition.Scale);
 		if (Found)
 		{
-			float Rotation = FMath::RandRange(-180.f, 180.f);
-			PlaceObject(ToSpawn, SpawnPoint, Rotation, RandScale);
+			SpawnPosition.YawRotation = FMath::RandRange(-180.f, 180.f);
+			ReturnArray.Add(SpawnPosition);
 		}
 	}
+	return ReturnArray;
 }
 
 bool ATile::FindEmptyLocation(FVector &OutLocation, float Radius)
@@ -71,13 +84,13 @@ bool ATile::FindEmptyLocation(FVector &OutLocation, float Radius)
 	return false;
 }
 
-void ATile::PlaceObject(TSubclassOf<AActor> ToSpawn, FVector SpawnPoint, float YawRotation, float Scale)
+void ATile::PlaceObject(TSubclassOf<AActor> ToSpawn, FSpawnPosition &SpawnPosition)
 {
 	AActor *Spawned = GetWorld()->SpawnActor<AActor>(ToSpawn);
-	Spawned->SetActorRelativeLocation(SpawnPoint);
+	Spawned->SetActorRelativeLocation(SpawnPosition.Location);
 	Spawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
-	Spawned->SetActorRotation(FRotator(0, YawRotation, 0));
-	Spawned->SetActorScale3D(FVector(Scale));
+	Spawned->SetActorRotation(FRotator(0, SpawnPosition.YawRotation, 0));
+	Spawned->SetActorScale3D(FVector(SpawnPosition.Scale));
 }
 
 bool ATile::CanSpawnAtLocation(FVector Location, float Radius)
@@ -98,6 +111,8 @@ bool ATile::CanSpawnAtLocation(FVector Location, float Radius)
 
 void ATile::SetPool(UActorPool *InPool)
 {
+	UE_LOG(LogTemp, Warning, TEXT("[%s]: Setting pool %s!"), *(this->GetName()), *(InPool->GetName()));
+	
 	Pool = InPool;
 
 	PositionNavMeshBoundsVolume();
@@ -114,4 +129,3 @@ void ATile::PositionNavMeshBoundsVolume()
 	UE_LOG(LogTemp, Warning, TEXT("[%s]: Checked out! [%s]"), *GetName(), *NavMeshBoundsVolume->GetName());
 	NavMeshBoundsVolume->SetActorLocation(GetActorLocation());
 }
-

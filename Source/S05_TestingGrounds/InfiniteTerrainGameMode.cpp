@@ -23,10 +23,24 @@ void AInfiniteTerrainGameMode::AddtoPool(ANavMeshBoundsVolume *VolumeToAdd)
 
 void AInfiniteTerrainGameMode::PopulateBoundsVolumePool()
 {
-	TActorIterator<ANavMeshBoundsVolume> NavMeshIterator = TActorIterator<ANavMeshBoundsVolume>(GetWorld());
+	TArray<AActor*> FoundVolumes;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ANavMeshBoundsVolume::StaticClass(), FoundVolumes);
+	
+	size_t j = 0;
+	
+	for (size_t i = 0; i < j; i++)
+	{
+		AddtoPool(Cast<ANavMeshBoundsVolume>(FoundVolumes[i]));
+		UE_LOG(LogTemp, Warning, TEXT("Pool [%s]: Volume added: [%s]!"), *(NavMeshPool->GetName()), *(FoundVolumes[i]->GetName()));
+	}
+	/*TActorIterator<ANavMeshBoundsVolume> NavMeshIterator = TActorIterator<ANavMeshBoundsVolume>(GetWorld());
 	while (NavMeshIterator)
 	{
 		AddtoPool(*NavMeshIterator);
+		j++;
 		++NavMeshIterator;
 	}
+	
+	UE_LOG(LogTemp, Warning, TEXT("Pool Populated: [%s], Pool Size: [%f]!"), *(NavMeshPool->GetName()), j);*/
+	
 }
