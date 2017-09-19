@@ -6,15 +6,34 @@
 #include "GameFramework/Actor.h"
 #include "Tile.generated.h"
 
-USTRUCT()
+USTRUCT(BlueprintType)
+struct FSpawnParams
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnParams")
+	int MinSpawn = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnParams")
+	int MaxSpawn = 4;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnParams")
+	int MinScale = 0.8;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnParams")
+	int MaxScale = 1.2;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnParams")
+	float Radius;
+};
+
+USTRUCT(BlueprintType)
 struct FSpawnPosition
 {
 	GENERATED_USTRUCT_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnParams")
 	FVector Location;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnParams")
 	float YawRotation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnParams")
 	float Scale;
-
 };
 
 class UActorPool;
@@ -45,12 +64,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable)
-	void PlaceActors(TSubclassOf<AActor> ToSpawn, int MinSpawn, int MaxSpawn, float Radius = 500.f, float MinScale = 1.f, float MaxScale = 1.f);
+	void PlaceActors(TSubclassOf<AActor> ToSpawn, FSpawnParams SpawnParameter);
 
 	UFUNCTION(BlueprintCallable)
-	void PlaceAIPawns(TSubclassOf<APawn> ToSpawn, int MinSpawn = 1, int MaxSpawn = 1, float Radius = 500.f);
+	void PlaceAIPawns(TSubclassOf<APawn> ToSpawn, FSpawnParams SpawnParameter);
 
-	TArray<FSpawnPosition> RandomSpawnPosition(int MinSpawn, int MaxSpawn, float MinScale, float MaxScale, float Radius);
+	TArray<FSpawnPosition> RandomSpawnPosition(FSpawnParams SpawnParameter);
 
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	void SetPool(UActorPool* InPool);
