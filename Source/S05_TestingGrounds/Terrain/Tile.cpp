@@ -28,6 +28,24 @@ void ATile::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Pool->Return(NavMeshBoundsVolume);
 }
 
+template<class T>
+void ATile::RandomlyPlaceActors(TSubclassOf<T> ToSpawn, int MinSpawn, int MaxSpawn, float Radius, float MinScale, float MaxScale)
+{
+	int NumberToSpawn = FMath::RandRange(MinSpawn, MaxSpawn);
+
+	for (size_t i = 0; i < NumberToSpawn; i++)
+	{
+		FSpawnPosition SpawnPosition;
+		SpawnPosition.Scale = FMath::RandRange(MinScale, MaxScale);
+		bool Found = FindEmptyLocation(SpawnPosition.Location, Radius * SpawnPosition.Scale);
+		if (Found)
+		{
+			SpawnPosition.YawRotation = FMath::RandRange(-180.f, 180.f);
+			PlaceObject(ToSpawn, SpawnPosition);
+		}
+	}
+}
+
 // Called every frame
 void ATile::Tick(float DeltaTime)
 {
@@ -37,11 +55,12 @@ void ATile::Tick(float DeltaTime)
 
 void ATile::PlaceActors(TSubclassOf<AActor> ToSpawn, int MinSpawn, int MaxSpawn, float Radius, float MinScale, float MaxScale)
 {
-	TArray<FSpawnPosition> Positions = RandomSpawnPosition(MinSpawn, MaxSpawn, MinScale, MaxScale, Radius);
-	for (FSpawnPosition SpawnPosition : Positions)
-	{
-		PlaceObject(ToSpawn, SpawnPosition);
-	}
+	RandomlyPlaceActors(ToSpawn, MinSpawn, MaxSpawn, Radius, MinScale, MaxScale);
+}
+
+void ATile::PlaceAIPawns(TSubclassOf<APawn> ToSpawn, int MinSpawn,int MaxSpawn,float Radius)
+{
+	RandomlyPlaceActors(ToSpawn, MinSpawn, MaxSpawn, Radius, 1, 1);
 }
 
 TArray<FSpawnPosition> ATile::RandomSpawnPosition(int MinSpawn, int MaxSpawn, float MinScale, float MaxScale, float Radius)
@@ -87,10 +106,25 @@ bool ATile::FindEmptyLocation(FVector &OutLocation, float Radius)
 void ATile::PlaceObject(TSubclassOf<AActor> ToSpawn, FSpawnPosition &SpawnPosition)
 {
 	AActor *Spawned = GetWorld()->SpawnActor<AActor>(ToSpawn);
-	Spawned->SetActorRelativeLocation(SpawnPosition.Location);
-	Spawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
-	Spawned->SetActorRotation(FRotator(0, SpawnPosition.YawRotation, 0));
-	Spawned->SetActorScale3D(FVector(SpawnPosition.Scale));
+	if (Spawned)
+	{
+		Spawned->SetActorRelativeLocation(SpawnPosition.Location);
+		Spawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
+		Spawned->SetActorRotation(FRotator(0, SpawnPosition.YawRotation, 0));
+		Spawned->SetActorScale3D(FVector(SpawnPosition.Scale));
+	}
+}
+
+void ATile::PlaceObject(TSubclassOf<APawn> ToSpawn, FSpawnPosition &SpawnPosition)
+{
+	APawn *Spawned = GetWorld()->SpawnActor<APawn>(ToSpawn);
+	if (Spawned)
+	{
+		Spawned->SetActorRelativeLocation(SpawnPosition.Location);
+		Spawned->SetActorRotation(FRotator(0, SpawnPosition.YawRotation, 0));
+		Spawned->SpawnDefaultController();
+		Spawned->Tags.Add(FName("Enemy"));
+	}
 }
 
 bool ATile::CanSpawnAtLocation(FVector Location, float Radius)
