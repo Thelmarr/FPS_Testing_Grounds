@@ -117,7 +117,8 @@ void ATile::PlaceObject(TSubclassOf<AActor> ToSpawn, FSpawnPosition &SpawnPositi
 
 void ATile::PlaceObject(TSubclassOf<APawn> ToSpawn, FSpawnPosition &SpawnPosition)
 {
-	APawn *Spawned = GetWorld()->SpawnActor<APawn>(ToSpawn);
+	FRotator Rotation = FRotator(0, SpawnPosition.YawRotation, 0);
+	APawn *Spawned = GetWorld()->SpawnActor<APawn>(ToSpawn, SpawnPosition.Location, Rotation);
 	if (Spawned)
 	{
 		Spawned->SetActorRelativeLocation(SpawnPosition.Location);
